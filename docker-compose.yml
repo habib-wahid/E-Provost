@@ -1,0 +1,57 @@
+version: '3'
+networks:
+  basic:
+    driver:
+      bridge
+volumes:
+  db:
+    driver: local
+
+services:
+  nginx:
+    networks:
+      - basic
+    build:
+      dockerfile: Dockerfile-nginx
+      context: .
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    links:
+      - fpm
+    container_name: e_provost_nginx
+  fpm:
+    networks:
+      - basic
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "9000:9000"
+    build:
+      context: .
+      dockerfile: Dockerfile-fpm
+    links:
+      - db
+    container_name: e_provost_fpm
+  db:
+    networks:
+      - basic  
+    image: mysql:5.7.17
+    links:
+      - adminer
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./data/mysql:/var/lib/mysql"
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    container_name: e_provost_db
+  adminer:
+    networks:
+      - basic
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: cg_adminer
