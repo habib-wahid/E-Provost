@@ -43,8 +43,8 @@ services:
       - myadmin
     ports:
       - "3306:3306"
-    volumes:
-      - "./data/mysql:/var/lib/mysql"
+#    volumes:
+#      - "./data/mysql:/var/lib/mysql"
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: 123456
